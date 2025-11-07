@@ -6,15 +6,16 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mipblzufysinssqushei.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pcGJsemZ5c3lua3NzcXVzaGVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzEzNjIyOTEsImV4cCI6MjA0NjkzODI5MX0.Gq25R6J5xYQF2Oo28wVnKkCp2v7QVg928pNnZlR1hE';
 
-// Log configuration status (only in development)
-if (import.meta.env.DEV) {
-  console.log('Supabase Config:', {
-    url: supabaseUrl,
-    hasEnvUrl: !!import.meta.env.VITE_SUPABASE_URL,
-    hasEnvKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
-    usingFallback: !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY,
-  });
-}
+// Log configuration status (helpful for debugging in production too)
+console.log('🔧 Supabase Config Check:', {
+  url: supabaseUrl,
+  urlSet: !!import.meta.env.VITE_SUPABASE_URL,
+  keySet: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+  keyLength: supabaseAnonKey?.length || 0,
+  keyStartsWith: supabaseAnonKey?.substring(0, 3) || 'N/A',
+  usingFallback: !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY,
+  environment: import.meta.env.MODE,
+});
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
