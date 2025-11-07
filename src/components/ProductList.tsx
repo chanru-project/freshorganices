@@ -8,6 +8,7 @@ export default function ProductList() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -28,8 +29,15 @@ export default function ProductList() {
         hint: error.hint,
         code: error.code,
       });
+      
+      if (error.code === 'PGRST301' || error.message?.includes('401') || error.message?.includes('permission denied')) {
+        setError('Database access denied. Please configure RLS policies in Supabase. See QUICK_FIX.md for instructions.');
+      } else {
+        setError(`Failed to load categories: ${error.message}`);
+      }
     } else if (data) {
       setCategories(data);
+      setError(null); // Clear error on success
     }
   };
 
@@ -51,8 +59,15 @@ export default function ProductList() {
         hint: error.hint,
         code: error.code,
       });
+      
+      if (error.code === 'PGRST301' || error.message?.includes('401') || error.message?.includes('permission denied')) {
+        setError('Database access denied. Please configure RLS policies in Supabase. See QUICK_FIX.md for instructions.');
+      } else {
+        setError(`Failed to load products: ${error.message}`);
+      }
     } else if (data) {
       setProducts(data);
+      setError(null); // Clear error on success
     }
     setLoading(false);
   };
@@ -78,6 +93,33 @@ export default function ProductList() {
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
+
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-6">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3 flex-1">
+                <h3 className="text-sm font-medium text-red-800">Connection Error</h3>
+                <div className="mt-2 text-sm text-red-700">
+                  <p>{error}</p>
+                  <div className="mt-4">
+                    <p className="font-semibold">To fix this:</p>
+                    <ol className="list-decimal list-inside mt-2 space-y-1">
+                      <li>Go to <a href="https://app.supabase.com/project/mipblzufysinssqushei/sql/new" target="_blank" rel="noopener noreferrer" className="underline font-semibold">Supabase SQL Editor</a></li>
+                      <li>Copy ALL code from <code className="bg-red-100 px-1 rounded">COPY_PASTE_RLS_FIX.sql</code> and paste it</li>
+                      <li>Click <strong>Run</strong> button</li>
+                      <li>Refresh this page</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex justify-center items-center py-20">
