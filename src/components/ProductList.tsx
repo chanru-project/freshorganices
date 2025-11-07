@@ -20,7 +20,15 @@ export default function ProductList() {
       .select('*')
       .order('name');
 
-    if (!error && data) {
+    if (error) {
+      console.error('Error fetching categories:', error);
+      console.error('Error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
+    } else if (data) {
       setCategories(data);
     }
   };
@@ -35,7 +43,15 @@ export default function ProductList() {
 
     const { data, error } = await query;
 
-    if (!error && data) {
+    if (error) {
+      console.error('Error fetching products:', error);
+      console.error('Error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
+    } else if (data) {
       setProducts(data);
     }
     setLoading(false);

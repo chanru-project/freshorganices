@@ -12,6 +12,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
+// Create Supabase client
+// The client automatically handles authentication headers
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export interface Category {

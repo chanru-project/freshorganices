@@ -27,9 +27,20 @@ export default function ContactPage() {
       setSuccess(true);
       setFormData({ name: '', email: '', message: '' });
       setTimeout(() => setSuccess(false), 5000);
-    } catch (err) {
-      setError('Failed to send message. Please try again.');
-      console.error(err);
+    } catch (err: any) {
+      console.error('Feedback error:', err);
+      console.error('Error details:', {
+        message: err?.message,
+        details: err?.details,
+        hint: err?.hint,
+        code: err?.code,
+      });
+      
+      if (err?.code === 'PGRST301' || err?.status === 401) {
+        setError('Authentication failed. Please check your Supabase configuration and RLS policies.');
+      } else {
+        setError(err?.message || 'Failed to send message. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

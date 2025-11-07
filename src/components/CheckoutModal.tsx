@@ -79,9 +79,20 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           delivery_address: '',
         });
       }, 3000);
-    } catch (err) {
-      setError('Failed to place order. Please try again.');
-      console.error(err);
+    } catch (err: any) {
+      console.error('Order error:', err);
+      console.error('Error details:', {
+        message: err?.message,
+        details: err?.details,
+        hint: err?.hint,
+        code: err?.code,
+      });
+      
+      if (err?.code === 'PGRST301' || err?.status === 401) {
+        setError('Authentication failed. Please check your Supabase configuration and RLS policies.');
+      } else {
+        setError(err?.message || 'Failed to place order. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
