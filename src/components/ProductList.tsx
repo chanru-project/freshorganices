@@ -30,7 +30,9 @@ export default function ProductList() {
         code: error.code,
       });
       
-      if (error.code === 'PGRST301' || error.message?.includes('401') || error.message?.includes('permission denied')) {
+      if (error.message?.includes('Invalid API key') || error.message?.includes('JWT') || error.code === 'PGRST301') {
+        setError('Invalid API key. Please get the correct key from Supabase Settings → API and update your environment variables in Netlify.');
+      } else if (error.code === 'PGRST301' || error.message?.includes('401') || error.message?.includes('permission denied')) {
         setError('Database access denied. Please configure RLS policies in Supabase. See QUICK_FIX.md for instructions.');
       } else {
         setError(`Failed to load categories: ${error.message}`);
@@ -60,7 +62,9 @@ export default function ProductList() {
         code: error.code,
       });
       
-      if (error.code === 'PGRST301' || error.message?.includes('401') || error.message?.includes('permission denied')) {
+      if (error.message?.includes('Invalid API key') || error.message?.includes('JWT') || error.code === 'PGRST301') {
+        setError('Invalid API key. Please get the correct key from Supabase Settings → API and update your environment variables in Netlify.');
+      } else if (error.code === 'PGRST301' || error.message?.includes('401') || error.message?.includes('permission denied')) {
         setError('Database access denied. Please configure RLS policies in Supabase. See QUICK_FIX.md for instructions.');
       } else {
         setError(`Failed to load products: ${error.message}`);
@@ -109,9 +113,11 @@ export default function ProductList() {
                   <div className="mt-4">
                     <p className="font-semibold">To fix this:</p>
                     <ol className="list-decimal list-inside mt-2 space-y-1">
-                      <li>Go to <a href="https://app.supabase.com/project/mipblzufysinssqushei/sql/new" target="_blank" rel="noopener noreferrer" className="underline font-semibold">Supabase SQL Editor</a></li>
-                      <li>Copy ALL code from <code className="bg-red-100 px-1 rounded">COPY_PASTE_RLS_FIX.sql</code> and paste it</li>
-                      <li>Click <strong>Run</strong> button</li>
+                      <li>Get your API key from <a href="https://app.supabase.com/project/mipblzufysinssqushei/settings/api" target="_blank" rel="noopener noreferrer" className="underline font-semibold">Supabase API Settings</a> (copy the <strong>anon public</strong> key)</li>
+                      <li>Go to <a href="https://app.netlify.com" target="_blank" rel="noopener noreferrer" className="underline font-semibold">Netlify Dashboard</a> → Your Site → Environment Variables</li>
+                      <li>Update <code className="bg-red-100 px-1 rounded">VITE_SUPABASE_ANON_KEY</code> with the correct key</li>
+                      <li>Redeploy your site in Netlify</li>
+                      <li>Also run the SQL from <code className="bg-red-100 px-1 rounded">COPY_PASTE_RLS_FIX.sql</code> in <a href="https://app.supabase.com/project/mipblzufysinssqushei/sql/new" target="_blank" rel="noopener noreferrer" className="underline">Supabase SQL Editor</a></li>
                       <li>Refresh this page</li>
                     </ol>
                   </div>

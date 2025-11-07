@@ -22,9 +22,32 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-// Create Supabase client
+// Create Supabase client with explicit configuration
 // The client automatically handles authentication headers
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+  },
+});
+
+// Test connection on initialization (development only)
+if (import.meta.env.DEV) {
+  supabase
+    .from('categories')
+    .select('count')
+    .limit(1)
+    .then(({ error }) => {
+      if (error) {
+        console.warn('Supabase connection test failed:', error.message);
+        if (error.message.includes('Invalid API key') || error.message.includes('JWT')) {
+          console.error('⚠️ API Key is invalid. Get the correct key from: https://app.supabase.com/project/mipblzufysinssqushei/settings/api');
+        }
+      } else {
+        console.log('✅ Supabase connection successful');
+      }
+    });
+}
 
 export interface Category {
   id: string;
